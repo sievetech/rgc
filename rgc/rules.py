@@ -24,16 +24,16 @@ class RuleSet(object):
         """
         Accepts arguments in the form rulename=param.
         """
-
         self.rules = kwargs 
 
     def apply(self, obj):
         """
         Applies and ANDs each rule received as kwargs on object instantiation.
+        If there are no rules to apply, returns True (vacuous truth).
         obj: A file inside a container (cloudfiles.Object)
         retval: the AND of each rule applied to obj
         """
-        ret_val = False
+        ret_val = True
         for rulename, arg in self.rules.iteritems():
             try:
                 rule = getattr(self, rulename+'_rule')
@@ -41,7 +41,6 @@ class RuleSet(object):
                 raise RuleDoesNotExistError(rulename)
             else:
                 ret_val &= rule(obj, arg)
-
         return ret_val
 
     def days_rule(self, obj, ndays):
@@ -51,10 +50,10 @@ class RuleSet(object):
         objdate = datetime.strptime(obj.last_modified, '%Y-%m-%dT%H:%M:%S.%f')
         return (datetime.now() - objdate).days > ndays
 
-    def is_export(self, obj, isxport):
+    def is_export_rule(self, obj, isxport):
         """
         If isxport is True, return whether obj is an export.
         If isxport is False, return whether obj is not an export file.
         """
-        return obj.container.name.startswith('export_') == isexport
+        return obj.container.name.startswith('export_') == isxport
 
