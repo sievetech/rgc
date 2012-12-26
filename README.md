@@ -1,4 +1,0 @@
-rgc
-===
-
-Rackspace Garbage Collector
