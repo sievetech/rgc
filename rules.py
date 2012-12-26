@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
+
+
 class RuleDoesNotExistError(Exception):
     
     def __init__(self, rulename):
@@ -40,4 +43,11 @@ class RuleSet(object):
                 ret_val &= rule(obj, arg)
 
         return ret_val
+
+    def days_rule(self, obj, ndays):
+        """
+        retval: True if obj's last modification is older than ndays. False otherwise.
+        """
+        objdate = datetime.strptime(obj.last_modified, '%Y-%m-%dT%H:%M:%S.%f')
+        return (datetime.now() - objdate).days > ndays
 
