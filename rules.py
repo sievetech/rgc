@@ -46,8 +46,15 @@ class RuleSet(object):
 
     def days_rule(self, obj, ndays):
         """
-        retval: True if obj's last modification is older than ndays. False otherwise.
+        retval: True if obj's is older than ndays. False otherwise.
         """
         objdate = datetime.strptime(obj.last_modified, '%Y-%m-%dT%H:%M:%S.%f')
         return (datetime.now() - objdate).days > ndays
+
+    def is_export(self, obj, isxport):
+        """
+        If isxport is True, return whether obj is an export.
+        If isxport is False, return whether obj is not an export file.
+        """
+        return obj.container.name.startswith('export_') == isexport
 
