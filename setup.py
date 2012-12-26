@@ -11,9 +11,9 @@ setup(
     version='0.1',
     url="https://github.com/sievetech/rgc",
     license="3-BSD",
-    description='Uma ferramenta para remover arquivos do Rackspace Files de forma eficaz.',
+    description='A tool to remove files from Rackspace in an efficient manner.',
     author="Dalton Barreto",
-    author_email="daltonmatos@gmail.com",
+    author_email="dalton.matos@sieve.com.br",
     long_description=open(os.path.join(ROOT, 'README.rst')).read(),
     packages=['rgc'],
     entry_points={
