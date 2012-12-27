@@ -15,8 +15,14 @@ class Rule(object):
     def __invert__(self):
         @rule
         def i(obj):
-            return not self(obj)
+            return not self.apply(obj)
         return i(*self.args, **self.kwargs)
+
+    def __and__(self, other):
+        @rule
+        def a(obj):
+            return self.apply(obj) and other.apply(obj)
+        return a(*self.args, **self.kwargs)
 
     def apply(self, obj):
         return self(obj, *self.args, **self.kwargs)

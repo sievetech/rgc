@@ -23,6 +23,11 @@ class TestRule(unittest.TestCase):
         rule = ~Rule()
         self.assertFalse(rule.apply(object))
 
+    def test_and_operator(self):
+        true = Rule()
+        false = ~Rule()
+        self.assertFalse((true & false).apply(object()))
+
 
 if __name__ == '__main__':
     unittest.main()
