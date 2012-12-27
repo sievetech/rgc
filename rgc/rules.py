@@ -24,6 +24,12 @@ class Rule(object):
             return self.apply(obj) and other.apply(obj)
         return a(*self.args, **self.kwargs)
 
+    def __or__(self, other):
+        @rule
+        def o(obj):
+            return self.apply(obj) or other.apply(obj)
+        return o(*self.args, **self.kwargs)
+
     def apply(self, obj):
         return self(obj, *self.args, **self.kwargs)
 
