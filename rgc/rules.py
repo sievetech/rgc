@@ -30,6 +30,14 @@ class Rule(object):
             return self.apply(obj) or other.apply(obj)
         return o(*self.args, **self.kwargs)
 
+    def __xor__(self, other):
+        @rule
+        def x(obj):
+            return self.apply(obj) != other.apply(obj)
+        return x(*self.args, **self.kwargs)
+
+    
+
     def apply(self, obj):
         return self(obj, *self.args, **self.kwargs)
 

@@ -33,6 +33,11 @@ class TestRule(unittest.TestCase):
         false = ~Rule()
         self.assertTrue((true | false).apply(object()))
 
+    def test_xor_operator(self):
+        true = Rule()
+        false = ~Rule()
+        self.assertTrue((true ^ false).apply(object()))
+
 
 if __name__ == '__main__':
     unittest.main()
