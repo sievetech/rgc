@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
+#TODO: set __name__ etc.
 
 from datetime import datetime
 
-#TODO: set docstrings, __name__ etc.
 
 class Rule(object):
+    """
+    Base rule object. Binds the args and kwargs passed on instantiation to its
+    rule function.
+    """
 
     def __init__(self, *args, **kwargs):
         self.args, self.kwargs = args, kwargs
@@ -37,10 +41,18 @@ class Rule(object):
         return x(*self.args, **self.kwargs)
 
     def apply(self, obj):
+        """
+        Applies rule to cloudfile object with binded args and kwargs.
+        """
         return self(obj, *self.args, **self.kwargs)
 
 
 def rule(func):
+    """
+    Decorator that defines new rules based on existing functions.
+    It accepts a function as its sole argument and returns a class that
+    inherits from rule and whose rule is given by the decorated function.
+    """
 
     class newr(Rule):
 
