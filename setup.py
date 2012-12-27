@@ -14,7 +14,7 @@ setup(
     description='A tool to remove files from Rackspace in an efficient manner.',
     author="Dalton Barreto",
     author_email="dalton.matos@sieve.com.br",
-    long_description=open(os.path.join(ROOT, 'README.rst')).read(),
+    long_description=open(os.path.join(ROOT, 'README.md')).read(),
     packages=['rgc'],
     entry_points={
         'console_scripts': [

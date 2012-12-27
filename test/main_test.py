@@ -58,3 +58,19 @@ class MainTest(unittest.TestCase):
             main()
             self.assertTrue(sys.stderr.write.call_count > 1)
             self.assertEquals(mock.call("Authentication tokens not present, please verify that you have os.environ['user'] and os.environ['key']"), sys.stderr.write.call_args_list[0])
+
+    def test_rule_validation(self):
+        """
+        Devemos mostrar a mensagem de "help" caso falte alguma informação
+        para o rgc poder rodar
+        """
+        with mock.patch('sys.stderr'),\
+             mock.patch('rgc.main.collect'),\
+             mock.patch('sys.exit'),\
+             mock.patch('rgc.main._impossible_to_authenticate', return_value=False):
+
+            sys.argv = ['rgc']
+            main()
+            self.assertTrue(sys.stderr.write.call_count > 1)
+            self.assertEquals(mock.call("No rule selected."), sys.stderr.write.call_args_list[0])
+
