@@ -54,6 +54,33 @@ class TestRule(unittest.TestCase):
         self.assertTrue((false ^ true).apply(self.obj))
         self.assertFalse((false ^ false).apply(self.obj))
 
+    def test_combination(self):
+        @rule
+        def maiorque(obj, value):
+            return obj > value
+
+        @rule
+        def iguala(obj, value):
+            return obj == value
+
+        myrule = maiorque(10) | iguala(20)
+        self.assertTrue(myrule.apply(30))
+        self.assertFalse(myrule.apply(3))
+        self.assertTrue(myrule.apply(20))
+
+        rule_2 = maiorque(10) & maiorque(15)
+        self.assertTrue(rule_2.apply(20))
+
+        rule_2 = maiorque(10) & ~maiorque(15)
+        self.assertTrue(rule_2.apply(12))
+        self.assertFalse(rule_2.apply(16))
+
+        rule_2 = maiorque(10) ^ iguala(15)
+        self.assertTrue(rule_2.apply(30))
+        self.assertFalse(rule_2.apply(8))
+
+
+
 
 class TestBaseRules(unittest.TestCase):
 

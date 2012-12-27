@@ -21,7 +21,7 @@ class Rule(object):
         @rule
         def i(obj):
             return not self.apply(obj)
-        return i(*self.args, **self.kwargs)
+        return i()
 
     def __and__(self, other):
         @rule
