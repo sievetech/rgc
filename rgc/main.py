@@ -8,24 +8,6 @@ from rgc import collect
 hash_rule = {'olderthan': None, 'newerthan': None}
 
 
-def _validate_params(params):
-    if _impossible_to_authenticate():
-        print >> sys.stderr, "Authentication tokens not present, please verify that you have os.environ['user'] and os.environ['key']"
-        show_help()
-
-    if 'help' in params:
-        show_help()
-
-    rule = params.get('rule', None)
-    if not rule:
-        print >> sys.stderr, "No rule selected."
-        show_help()
-
-    if rule not in hash_rule:
-        print >> sys.stderr, "Invalid rule: {0}".format(rule)
-        show_help()
-
-
 def main():
     # O modargs sempre espera que a chamada da linha de comando tenha sido
     # $ prog command args
@@ -43,13 +25,31 @@ def main():
     sys.exit(0)
 
 
+def _validate_params(params):
+    if _impossible_to_authenticate():
+        print >> sys.stderr, "Authentication tokens not present, please verify that you have os.environ['user'] and os.environ['key']"
+        _show_help()
+
+    if 'help' in params:
+        _show_help()
+
+    rule = params.get('rule', None)
+    if not rule:
+        print >> sys.stderr, "No rule selected."
+        _show_help()
+
+    if rule not in hash_rule:
+        print >> sys.stderr, "Invalid rule: {0}".format(rule)
+        _show_help()
+
+
 def _impossible_to_authenticate():
     has_user = os.environ.get('user', None)
     has_key = os.environ.get('key', None)
     return not has_user or not has_key
 
 
-def show_help():
+def _show_help():
     print >> sys.stderr, """
     rgc - Rackspace garbage Collector
 

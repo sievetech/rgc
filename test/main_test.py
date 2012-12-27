@@ -5,7 +5,7 @@ import unittest
 import mock
 import os
 
-from rgc.main import main, _impossible_to_authenticate
+from rgc.main import main, _impossible_to_authenticate, _show_help, _validate_params
 
 
 class MainTest(unittest.TestCase):
@@ -46,7 +46,6 @@ class MainTest(unittest.TestCase):
         para o rgc poder rodar
         """
         with mock.patch('sys.stderr'),\
-             mock.patch('rgc.main.collect'),\
              mock.patch('sys.exit'):
 
             if 'user' in os.environ:
@@ -55,7 +54,7 @@ class MainTest(unittest.TestCase):
                 del os.environ['key']
 
             sys.argv = ['rgc']
-            main()
+            _validate_params({})
             self.assertTrue(sys.stderr.write.call_count > 1)
             self.assertEquals(mock.call("Authentication tokens not present, please verify that you have os.environ['user'] and os.environ['key']"), sys.stderr.write.call_args_list[0])
 
@@ -65,12 +64,11 @@ class MainTest(unittest.TestCase):
         para o rgc poder rodar
         """
         with mock.patch('sys.stderr'),\
-             mock.patch('rgc.main.collect'),\
              mock.patch('sys.exit'),\
              mock.patch('rgc.main._impossible_to_authenticate', return_value=False):
 
             sys.argv = ['rgc']
-            main()
+            _validate_params({})
             self.assertTrue(sys.stderr.write.call_count > 1)
             self.assertEquals(mock.call("No rule selected."), sys.stderr.write.call_args_list[0])
 
@@ -91,11 +89,10 @@ class MainTest(unittest.TestCase):
         para o rgc poder rodar
         """
         with mock.patch('sys.stderr'),\
-             mock.patch('rgc.main.collect'),\
              mock.patch('sys.exit'),\
              mock.patch('rgc.main._impossible_to_authenticate', return_value=False):
 
             sys.argv = ['rgc', '--rule', 'isold', '--container', 'trash', '--dryrun']
-            main()
+            _validate_params({'rule': 'isold', 'container': 'trash', 'dryrun': True})
             self.assertTrue(sys.stderr.write.call_count > 1)
             self.assertEquals(mock.call("Invalid rule: isold"), sys.stderr.write.call_args_list[0])
