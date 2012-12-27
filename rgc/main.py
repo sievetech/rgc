@@ -9,6 +9,7 @@ def main():
     # O modargs sempre espera que a chamada da linha de comando tenha sido
     # $ prog command args
     # Por isso ignoramos o primeiro item da tupla retornada por ele.
+
     _, params = args.parse(sys.argv[1:])
 
     if _impossible_to_authenticate():
@@ -17,6 +18,7 @@ def main():
 
     if 'help' in params:
         show_help()
+
     collect(params)
     sys.exit(0)
 
