@@ -7,6 +7,8 @@ import datetime
 from rgc.rules import rule, Rule
 from rgc.rules import olderthan, newerthan, ageexact
 from rgc.rules import namehasprefix, namehassuffix, containerhasprefix, containerhassuffix
+from rgc.rules import AVAILABLE_RULES
+
 
 class TestRule(unittest.TestCase):
 
@@ -140,6 +142,18 @@ class TestBaseRules(unittest.TestCase):
         self.assertTrue(isodp.apply(odp))
         self.assertFalse(isodp.apply(notodp))
 
+
+class RuleDecoratorTest(unittest.TestCase):
+
+    def setUp(self):
+        AVAILABLE_RULES = {}
+
+    def test_register_rule(self):
+        @rule
+        def myrule(obj, param):
+            return True
+
+        self.assertTrue('myrule' in AVAILABLE_RULES)
 
 if __name__ == '__main__':
     unittest.main()

@@ -4,8 +4,7 @@ import os
 
 from modargs import args
 from rgc import collect
-
-hash_rule = {'olderthan': None, 'newerthan': None}
+from rules import AVAILABLE_RULES
 
 
 def main():
@@ -20,8 +19,11 @@ def main():
     container = params.get('container', None)
     dryrun = params.get('dryrun', False)
     rule = params.get('rule', None)
+    rule_param = params.get('ruleparam', None)
 
-    collect(container=container, dryrun=dryrun, rule=rule)
+    rule_instance = AVAILABLE_RULES[rule](rule_param)
+
+    collect(container=container, dryrun=dryrun, rule=rule_instance)
     sys.exit(0)
 
 
@@ -38,7 +40,7 @@ def _validate_params(params):
         print >> sys.stderr, "No rule selected."
         _show_help()
 
-    if rule not in hash_rule:
+    if rule not in AVAILABLE_RULES:
         print >> sys.stderr, "Invalid rule: {0}".format(rule)
         _show_help()
 
@@ -64,7 +66,7 @@ def _show_help():
       * key : Your Rackspace Cloudfiles API key
 
     Available rules: {0}
-    """.format(hash_rule.keys())
+    """.format(AVAILABLE_RULES.keys())
     sys.exit(0)
 
 #user=sieve key=908ae8y37yr7a43yt7yt rgc --days 30 --type brand
