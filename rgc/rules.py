@@ -36,8 +36,6 @@ class Rule(object):
             return self.apply(obj) != other.apply(obj)
         return x(*self.args, **self.kwargs)
 
-    
-
     def apply(self, obj):
         return self(obj, *self.args, **self.kwargs)
 
