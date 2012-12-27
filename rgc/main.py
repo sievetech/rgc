@@ -3,6 +3,7 @@
 import sys
 import os
 
+from cloudfiles.errors import AuthenticationFailed, NoSuchContainer
 from modargs import args
 from rgc import collect
 from rules import AVAILABLE_RULES
@@ -17,6 +18,8 @@ def main():
 
     _validate_params(params)
 
+    user = os.environ['user']
+    key =  os.environ['key']
     container = params.get('container', None)
     dryrun = params.get('dryrun', False)
     rule = params.get('rule', None)
@@ -24,8 +27,15 @@ def main():
 
     rule_instance = AVAILABLE_RULES[rule](rule_param)
 
+    try:
+        print collect(container=container, dryrun=dryrun, rule=rule_instance, user=user, key=key)
 
-    print collect(container=container, dryrun=dryrun, rule=rule_instance)
+    except AuthenticationFailed as auth:
+        print "User or API KEY wrong ", auth.message
+    except NoSuchContainer as nocontainer:
+        print "No such container: ", nocontainer.message
+    except Exception as e:
+        print "Ops, an error ocorred : ", e.message
     sys.exit(0)
 
 

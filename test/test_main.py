@@ -81,11 +81,16 @@ class MainTest(unittest.TestCase):
              mock.patch.dict('rgc.main.AVAILABLE_RULES', {'isold': rule_instance_class}),\
              mock.patch('rgc.main._impossible_to_authenticate', return_value=False),\
              mock.patch('sys.exit'):
+            os.environ['user'] = 'sieve'
+            os.environ['key'] = 'sieve-key'
 
             sys.argv = ['rgc', '--rule', 'isold', '--container', 'trash', '--dryrun']
             main()
 
-            self.assertEquals([mock.call(rule=rule_instance_mock, container='trash', dryrun=True)], mockcollect.call_args_list)
+            self.assertEquals([mock.call(rule=rule_instance_mock, container='trash', dryrun=True,user=mock.ANY, key=mock.ANY)], mockcollect.call_args_list)
+
+            del os.environ['user']
+            del os.environ['key']
 
     def test_rule_validation(self):
         """

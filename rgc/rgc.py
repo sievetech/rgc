@@ -4,8 +4,8 @@ import os
 import cloudfiles
 
 
-def collect(rule, container='', dryrun=False):
-    conn = cloudfiles.get_connection(os.environ['user'], os.environ['key'])
+def collect(user, key, rule, container='', dryrun=False):
+    conn = cloudfiles.get_connection(user, key)
     if container:
         containers = [conn.get_container(container)]
     else:

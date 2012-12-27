@@ -26,7 +26,7 @@ class TestCollect(unittest.TestCase):
         mock_conn.get_container.return_value = mock_cont
 
         with mock.patch('cloudfiles.get_connection', return_value=mock_conn):
-            deleted = collect(rule=Rule())
+            deleted = collect(rule=Rule(), user=mock.ANY, key=mock.ANY)
 
         self.assertIn(mock.call.delete_object(mock_obj.name), mock_cont.method_calls)
         self.assertItemsEqual(['blargh'], deleted)
@@ -42,7 +42,7 @@ class TestCollect(unittest.TestCase):
         mock_conn.get_container.return_value = mock_cont
 
         with mock.patch('cloudfiles.get_connection', return_value=mock_conn):
-            deleted = collect(rule=Rule(), dryrun=True)
+            deleted = collect(rule=Rule(), dryrun=True,user=mock.ANY, key=mock.ANY)
 
         self.assertNotIn(mock.call.delete_object(mock_obj.name), mock_cont.method_calls)
         self.assertItemsEqual([mock_obj.name], deleted)
@@ -62,7 +62,7 @@ class TestCollect(unittest.TestCase):
         mock_conn.get_container.return_value = mock_cont
 
         with mock.patch('cloudfiles.get_connection', return_value=mock_conn):
-            deleted = collect(rule=namehasprefix('pref')&namehassuffix('suf'))
+            deleted = collect(rule=namehasprefix('pref')&namehassuffix('suf') ,user=mock.ANY, key=mock.ANY)
 
         self.assertIn(mock.call.delete_object(mock_obj1.name), mock_cont.method_calls)
         self.assertNotIn(mock.call.delete_object(mock_obj2.name), mock_cont.method_calls)
@@ -88,7 +88,7 @@ class TestCollect(unittest.TestCase):
         mock_conn.get_container.return_value = mock_cont1
 
         with mock.patch('cloudfiles.get_connection', return_value=mock_conn):
-            deleted = collect(rule=Rule(), container='container1')
+            deleted = collect(rule=Rule(), container='container1', user=mock.ANY, key=mock.ANY)
 
         self.assertIn(mock.call.delete_object(mock_obj1.name), mock_cont1.method_calls)
         self.assertNotIn(mock.call.delete_object(mock_obj2.name), mock_cont2.method_calls)
