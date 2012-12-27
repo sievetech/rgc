@@ -2,6 +2,7 @@
 
 from datetime import datetime
 
+#TODO: set docstrings, __name__ etc.
 
 class Rule(object):
 
@@ -10,6 +11,12 @@ class Rule(object):
 
     def __call__(self, *args, **kwargs):
         return True
+
+    def __invert__(self):
+        @rule
+        def i(obj):
+            return not self(obj)
+        return i(*self.args, **self.kwargs)
 
     def apply(self, obj):
         return self(obj, *self.args, **self.kwargs)
@@ -21,7 +28,6 @@ def rule(func):
 
         def __call__(self, obj):
             return func(obj)
-        #set docstring, name etc.
 
     return newr
 

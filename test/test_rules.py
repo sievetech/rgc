@@ -17,7 +17,11 @@ class TestRule(unittest.TestCase):
         self.assertTrue(Rule, isinstance(foo, Rule))
 
     def test_base_class_returns_true(self):
-        self.assertEqual(True, Rule().apply(object()))
+        self.assertTrue(Rule().apply(object()))
+
+    def test_unary_negation(self):
+        rule = ~Rule()
+        self.assertFalse(rule.apply(object))
 
 
 if __name__ == '__main__':
