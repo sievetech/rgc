@@ -26,7 +26,14 @@ def main():
         print >> sys.stderr, "No rule selected."
         show_help()
 
-    collect(params)
+    if rule not in hash_rule:
+        print >> sys.stderr, "Invalid rule: {0}".format(rule)
+        show_help()
+
+    container = params.get('container', None)
+    dryrun = params.get('dryrun', False)
+
+    collect(container=container, dryrun=dryrun, rule=rule)
     sys.exit(0)
 
 
