@@ -49,6 +49,7 @@ def rule(func):
 
     return newr
 
+
 @rule
 def olderthan(obj, ndays):
     """
@@ -57,12 +58,32 @@ def olderthan(obj, ndays):
     objdate = datetime.strptime(obj.last_modified, '%Y-%m-%dT%H:%M:%S.%f')
     return (datetime.now() - objdate).days > ndays
 
+
+@rule
+def newerthan(obj, ndays):
+    """
+    Returns True if obj's is newer than ndays. False otherwise.
+    """
+    objdate = datetime.strptime(obj.last_modified, '%Y-%m-%dT%H:%M:%S.%f')
+    return (datetime.now() - objdate).days < ndays
+
+
+@rule
+def ageexact(obj, ndays):
+    """
+    Returns True if obj's age is exactly ndays.
+    """
+    objdate = datetime.strptime(obj.last_modified, '%Y-%m-%dT%H:%M:%S.%f')
+    return (datetime.now() - objdate).days == ndays
+
+
 @rule
 def namehasprefix(obj, prefix):
     """
     Returns whether obj's name starts with prefix.
     """
     return obj.name.startswith(prefix)
+
 
 @rule
 def namehassuffix(obj, suffix):
@@ -71,12 +92,14 @@ def namehassuffix(obj, suffix):
     """
     return obj.name.endswith(suffix)
 
+
 @rule
 def containerhasprefix(obj, prefix):
     """
     Returns whether obj's container starts with prefix.
     """
     return obj.container.name.startswith(prefix)
+
 
 @rule
 def containerhassuffix(obj, suffix):

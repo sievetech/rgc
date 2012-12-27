@@ -5,7 +5,8 @@ import unittest
 import datetime
 
 from rgc.rules import rule, Rule
-from rgc.rules import olderthan, namehasprefix, namehassuffix, containerhasprefix, containerhassuffix
+from rgc.rules import olderthan, newerthan, ageexact
+from rgc.rules import namehasprefix, namehassuffix, containerhasprefix, containerhassuffix
 
 class TestRule(unittest.TestCase):
 
@@ -13,7 +14,6 @@ class TestRule(unittest.TestCase):
         self.obj = object()
 
     def test_rule_decorator(self):
-
         @rule
         def foo(obj, *args, **kwargs):
             pass
@@ -67,6 +67,32 @@ class TestBaseRules(unittest.TestCase):
         self.assertFalse(olderthan(ndays=dt.days+1).apply(obj))
         #returns False when obj has the same age
         self.assertFalse(olderthan(ndays=dt.days).apply(obj))
+
+    def test_newerthan(self):
+        obj = mock.MagicMock()
+        dt = datetime.timedelta(days=31)
+        objdate = (datetime.datetime.now() - dt)
+        obj.last_modified = objdate.strftime('%Y-%m-%dT%H:%M:%S.%f')
+
+        #returns False when obj is old
+        self.assertFalse(newerthan(ndays=dt.days-1).apply(obj))
+        #returns True when obj is new
+        self.assertTrue(newerthan(ndays=dt.days+1).apply(obj))
+        #returns False when obj has the same age
+        self.assertFalse(newerthan(ndays=dt.days).apply(obj))
+
+    def test_ageexact(self):
+        obj = mock.MagicMock()
+        dt = datetime.timedelta(days=31)
+        objdate = (datetime.datetime.now() - dt)
+        obj.last_modified = objdate.strftime('%Y-%m-%dT%H:%M:%S.%f')
+
+        #returns False when obj is old
+        self.assertFalse(ageexact(ndays=dt.days-1).apply(obj))
+        #returns False when obj is new
+        self.assertFalse(ageexact(ndays=dt.days+1).apply(obj))
+        #returns True when obj has the same age
+        self.assertTrue(ageexact(ndays=dt.days).apply(obj))
 
     def test_namehasprefix(self):
         export = mock.MagicMock()
