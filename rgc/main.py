@@ -19,8 +19,11 @@ def main():
     container = params.get('container', None)
     dryrun = params.get('dryrun', False)
     rule = params.get('rule', None)
+    rule_param = params.get('ruleparam', None)
 
-    collect(container=container, dryrun=dryrun, rule=rule)
+    rule_instance = AVAILABLE_RULES[rule](rule_param)
+
+    collect(container=container, dryrun=dryrun, rule=rule_instance)
     sys.exit(0)
 
 

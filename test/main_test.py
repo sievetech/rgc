@@ -18,7 +18,7 @@ class MainTest(unittest.TestCase):
             os.environ['key'] = 'sieve-key'
             sys.argv = ['rgc', '--help']
 
-            main()
+            _validate_params({'help': True})
             self.assertTrue(sys.stderr.write.call_count > 1)
 
             del os.environ['user']
@@ -73,15 +73,19 @@ class MainTest(unittest.TestCase):
             self.assertEquals(mock.call("No rule selected."), sys.stderr.write.call_args_list[0])
 
     def test_params_collect(self):
+        rule_instance_class = mock.Mock()
+        rule_instance_mock = mock.Mock()
+        rule_instance_class.return_value = rule_instance_mock
         with mock.patch('rgc.main.collect') as mockcollect,\
-            mock.patch('sys.stderr'),\
-            mock.patch('rgc.main._impossible_to_authenticate', return_value=False),\
-            mock.patch('sys.exit'):
+             mock.patch('sys.stderr'),\
+             mock.patch.dict('rgc.main.AVAILABLE_RULES', {'isold': rule_instance_class}),\
+             mock.patch('rgc.main._impossible_to_authenticate', return_value=False),\
+             mock.patch('sys.exit'):
 
             sys.argv = ['rgc', '--rule', 'isold', '--container', 'trash', '--dryrun']
             main()
 
-            self.assertEquals([mock.call(rule='isold', container='trash', dryrun=True)], mockcollect.call_args_list)
+            self.assertEquals([mock.call(rule=rule_instance_mock, container='trash', dryrun=True)], mockcollect.call_args_list)
 
     def test_rule_validation(self):
         """
