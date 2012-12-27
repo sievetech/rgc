@@ -1,4 +1,5 @@
 #coding: utf-8
+
 import sys
 import os
 
@@ -23,7 +24,8 @@ def main():
 
     rule_instance = AVAILABLE_RULES[rule](rule_param)
 
-    collect(container=container, dryrun=dryrun, rule=rule_instance)
+
+    print collect(container=container, dryrun=dryrun, rule=rule_instance)
     sys.exit(0)
 
 

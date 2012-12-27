@@ -27,19 +27,19 @@ class Rule(object):
         @rule
         def a(obj):
             return self.apply(obj) and other.apply(obj)
-        return a(*self.args, **self.kwargs)
+        return a()
 
     def __or__(self, other):
         @rule
         def o(obj):
             return self.apply(obj) or other.apply(obj)
-        return o(*self.args, **self.kwargs)
+        return o()
 
     def __xor__(self, other):
         @rule
         def x(obj):
             return self.apply(obj) != other.apply(obj)
-        return x(*self.args, **self.kwargs)
+        return x()
 
     def apply(self, obj):
         """
