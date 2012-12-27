@@ -5,7 +5,7 @@ import unittest
 import datetime
 
 from rgc.rules import rule, Rule
-from rgc.rules import olderthan, namehasprefix, namehassuffix
+from rgc.rules import olderthan, namehasprefix, namehassuffix, containerhasprefix, containerhassuffix
 
 class TestRule(unittest.TestCase):
 
@@ -88,6 +88,29 @@ class TestBaseRules(unittest.TestCase):
         notodp.name = 'blargh'
 
         isodp = namehassuffix('.odp')
+        self.assertTrue(isodp.apply(odp))
+        self.assertFalse(isodp.apply(notodp))
+
+    def test_containerhasprefix(self):
+        export = mock.MagicMock()
+        export.container.name = 'export_frete'
+
+        notexport = mock.MagicMock()
+        notexport.container.name = 'blargh'
+
+        isexport = containerhasprefix('export_')
+
+        self.assertTrue(isexport.apply(export))
+        self.assertFalse(isexport.apply(notexport))
+
+    def test_containerhassuffix(self):
+        odp = mock.MagicMock()
+        odp.container.name = 'presentation.odp'
+
+        notodp = mock.MagicMock()
+        notodp.container.name = 'blargh'
+
+        isodp = containerhassuffix('.odp')
         self.assertTrue(isodp.apply(odp))
         self.assertFalse(isodp.apply(notodp))
 

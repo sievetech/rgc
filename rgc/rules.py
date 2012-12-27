@@ -71,3 +71,17 @@ def namehassuffix(obj, suffix):
     """
     return obj.name.endswith(suffix)
 
+@rule
+def containerhasprefix(obj, prefix):
+    """
+    Returns whether obj's container starts with prefix.
+    """
+    return obj.container.name.startswith(prefix)
+
+@rule
+def containerhassuffix(obj, suffix):
+    """
+    Returns whether obj's container ends with suffix.
+    """
+    return obj.container.name.endswith(suffix)
+
