@@ -7,13 +7,8 @@ from rgc import collect
 
 hash_rule = {'olderthan': None, 'newerthan': None}
 
-def main():
-    # O modargs sempre espera que a chamada da linha de comando tenha sido
-    # $ prog command args
-    # Por isso ignoramos o primeiro item da tupla retornada por ele.
 
-    _, params = args.parse(sys.argv[1:])
-
+def _validate_params(params):
     if _impossible_to_authenticate():
         print >> sys.stderr, "Authentication tokens not present, please verify that you have os.environ['user'] and os.environ['key']"
         show_help()
@@ -30,8 +25,19 @@ def main():
         print >> sys.stderr, "Invalid rule: {0}".format(rule)
         show_help()
 
+
+def main():
+    # O modargs sempre espera que a chamada da linha de comando tenha sido
+    # $ prog command args
+    # Por isso ignoramos o primeiro item da tupla retornada por ele.
+
+    _, params = args.parse(sys.argv[1:])
+
+    _validate_params(params)
+
     container = params.get('container', None)
     dryrun = params.get('dryrun', False)
+    rule = params.get('rule', None)
 
     collect(container=container, dryrun=dryrun, rule=rule)
     sys.exit(0)
@@ -41,6 +47,7 @@ def _impossible_to_authenticate():
     has_user = os.environ.get('user', None)
     has_key = os.environ.get('key', None)
     return not has_user or not has_key
+
 
 def show_help():
     print >> sys.stderr, """
