@@ -4,61 +4,142 @@ import mock
 import unittest
 import datetime
 
-from rgc.rules import RuleSet, RuleDoesNotExistError
+from rgc.rules import rule, Rule
+from rgc.rules import olderthan, newerthan, ageexact
+from rgc.rules import namehasprefix, namehassuffix, containerhasprefix, containerhassuffix
+
+class TestRule(unittest.TestCase):
+
+    def setUp(self):
+        self.obj = object()
+
+    def test_rule_decorator(self):
+        @rule
+        def foo(obj, *args, **kwargs):
+            pass
+
+        self.assertTrue(Rule, isinstance(foo, Rule))
+
+    def test_base_class_returns_true(self):
+        self.assertTrue(Rule().apply(self.obj))
+
+    def test_unary_negation(self):
+        rule = ~Rule()
+        self.assertFalse(rule.apply(object))
+        self.assertTrue((~rule).apply(object))
+
+    def test_and_operator(self):
+        true = Rule()
+        false = ~Rule()
+        self.assertTrue((true & true).apply(self.obj))
+        self.assertFalse((true & false).apply(self.obj))
+        self.assertFalse((false & true).apply(self.obj))
+        self.assertFalse((false & false).apply(self.obj))
+
+    def test_or_operator(self):
+        true = Rule()
+        false = ~Rule()
+        self.assertTrue((true | true).apply(self.obj))
+        self.assertTrue((true | false).apply(self.obj))
+        self.assertTrue((false | true).apply(self.obj))
+        self.assertFalse((false | false).apply(self.obj))
+
+    def test_xor_operator(self):
+        true = Rule()
+        false = ~Rule()
+        self.assertFalse((true ^ true).apply(self.obj))
+        self.assertTrue((true ^ false).apply(self.obj))
+        self.assertTrue((false ^ true).apply(self.obj))
+        self.assertFalse((false ^ false).apply(self.obj))
 
 
-class TestRules(unittest.TestCase):
+class TestBaseRules(unittest.TestCase):
 
-    def test_vacuous_truth(self):
-        self.assertEqual(True, RuleSet().apply(object()))
-
-    def test_bad_rule_raises_error(self):
-        rset = RuleSet(badrule='blargh')
-        self.assertRaises(RuleDoesNotExistError, rset.apply, object())
-
-    def test_valid_rule_should_be_applied(self):
-        rset = RuleSet(mockrule='mockarg')
-        obj = object()
-        mockrule_result = False
-        with mock.patch.object(rset, 'mockrule_rule',create=True, return_value=mockrule_result) as mockrule:
-            self.assertEqual(mockrule_result, rset.apply(obj))
-            self.assertEqual(mock.call(obj, 'mockarg'), mockrule.call_args)
-
-    def test_multiple_rules_should_be_applied(self):
-        rset = RuleSet(mockrule1='mockarg1', mockrule2='mockarg2')
-        obj = object()
-        with mock.patch.object(rset, 'mockrule1_rule', create=True, return_value=False) as mockrule1,\
-             mock.patch.object(rset, 'mockrule2_rule', create=True, return_value=False) as mockrule2:
-
-            self.assertEqual(False, rset.apply(obj))
-            self.assertEqual(mock.call(obj, 'mockarg1'), mockrule1.call_args)
-            self.assertEqual(mock.call(obj, 'mockarg2'), mockrule2.call_args)
-
-    def test_days_rule(self):
+    def test_olderthan(self):
         obj = mock.MagicMock()
         dt = datetime.timedelta(days=31)
         objdate = (datetime.datetime.now() - dt)
         obj.last_modified = objdate.strftime('%Y-%m-%dT%H:%M:%S.%f')
 
         #returns True when obj is old
-        self.assertEqual(True, RuleSet(days=dt.days-1).apply(obj))
+        self.assertTrue(olderthan(ndays=dt.days-1).apply(obj))
         #returns False when obj is new
-        self.assertEqual(False, RuleSet(days=dt.days+1).apply(obj))
+        self.assertFalse(olderthan(ndays=dt.days+1).apply(obj))
         #returns False when obj has the same age
-        self.assertEqual(False, RuleSet(days=dt.days).apply(obj))
+        self.assertFalse(olderthan(ndays=dt.days).apply(obj))
 
-    def test_is_export_rule(self):
+    def test_newerthan(self):
+        obj = mock.MagicMock()
+        dt = datetime.timedelta(days=31)
+        objdate = (datetime.datetime.now() - dt)
+        obj.last_modified = objdate.strftime('%Y-%m-%dT%H:%M:%S.%f')
+
+        #returns False when obj is old
+        self.assertFalse(newerthan(ndays=dt.days-1).apply(obj))
+        #returns True when obj is new
+        self.assertTrue(newerthan(ndays=dt.days+1).apply(obj))
+        #returns False when obj has the same age
+        self.assertFalse(newerthan(ndays=dt.days).apply(obj))
+
+    def test_ageexact(self):
+        obj = mock.MagicMock()
+        dt = datetime.timedelta(days=31)
+        objdate = (datetime.datetime.now() - dt)
+        obj.last_modified = objdate.strftime('%Y-%m-%dT%H:%M:%S.%f')
+
+        #returns False when obj is old
+        self.assertFalse(ageexact(ndays=dt.days-1).apply(obj))
+        #returns False when obj is new
+        self.assertFalse(ageexact(ndays=dt.days+1).apply(obj))
+        #returns True when obj has the same age
+        self.assertTrue(ageexact(ndays=dt.days).apply(obj))
+
+    def test_namehasprefix(self):
+        export = mock.MagicMock()
+        export.name = 'export_frete'
+
+        notexport = mock.MagicMock()
+        notexport.name = 'blargh'
+
+        isexport = namehasprefix('export_')
+
+        self.assertTrue(isexport.apply(export))
+        self.assertFalse(isexport.apply(notexport))
+
+    def test_namehassuffix(self):
+        odp = mock.MagicMock()
+        odp.name = 'presentation.odp'
+
+        notodp = mock.MagicMock()
+        notodp.name = 'blargh'
+
+        isodp = namehassuffix('.odp')
+        self.assertTrue(isodp.apply(odp))
+        self.assertFalse(isodp.apply(notodp))
+
+    def test_containerhasprefix(self):
         export = mock.MagicMock()
         export.container.name = 'export_frete'
 
         notexport = mock.MagicMock()
         notexport.container.name = 'blargh'
 
-        self.assertEqual(True, RuleSet(is_export=True).apply(export))
-        self.assertEqual(False, RuleSet(is_export=True).apply(notexport))
+        isexport = containerhasprefix('export_')
 
-        self.assertEqual(False, RuleSet(is_export=False).apply(export))
-        self.assertEqual(True, RuleSet(is_export=False).apply(notexport))
+        self.assertTrue(isexport.apply(export))
+        self.assertFalse(isexport.apply(notexport))
+
+    def test_containerhassuffix(self):
+        odp = mock.MagicMock()
+        odp.container.name = 'presentation.odp'
+
+        notodp = mock.MagicMock()
+        notodp.container.name = 'blargh'
+
+        isodp = containerhassuffix('.odp')
+        self.assertTrue(isodp.apply(odp))
+        self.assertFalse(isodp.apply(notodp))
+
 
 if __name__ == '__main__':
     unittest.main()
