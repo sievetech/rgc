@@ -5,6 +5,8 @@ import os
 from modargs import args
 from rgc import collect
 
+hash_rule = {'olderthan': None, 'newerthan': None}
+
 def main():
     # O modargs sempre espera que a chamada da linha de comando tenha sido
     # $ prog command args
@@ -19,7 +21,19 @@ def main():
     if 'help' in params:
         show_help()
 
-    collect(params)
+    rule = params.get('rule', None)
+    if not rule:
+        print >> sys.stderr, "No rule selected."
+        show_help()
+
+    if rule not in hash_rule:
+        print >> sys.stderr, "Invalid rule: {0}".format(rule)
+        show_help()
+
+    container = params.get('container', None)
+    dryrun = params.get('dryrun', False)
+
+    collect(container=container, dryrun=dryrun, rule=rule)
     sys.exit(0)
 
 
@@ -41,7 +55,9 @@ def show_help():
     You must have two environ variables to be able to use rgc.
       * user: Your Rackspace Cloudfiles username
       * key : Your Rackspace Cloudfiles API key
-    """
+
+    Available rules: {0}
+    """.format(hash_rule.keys())
     sys.exit(0)
 
 #user=sieve key=908ae8y37yr7a43yt7yt rgc --days 30 --type brand

@@ -3,7 +3,8 @@ import cloudfiles
 import os
 
 
-def collect(arglist):
+def collect(rule=None, container=None, dryrun=None):
     cloud = cloudfiles.get_connection(os.environ['user'], os.environ['key'])
-    cloud.create_container('test_create_container')
+
+
     print  "ok"

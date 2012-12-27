@@ -7,8 +7,8 @@ import os
 
 from rgc.main import main, _impossible_to_authenticate
 
-class MainTest(unittest.TestCase):
 
+class MainTest(unittest.TestCase):
 
     def test_help_command(self):
         with mock.patch('sys.stderr'),\
@@ -58,3 +58,44 @@ class MainTest(unittest.TestCase):
             main()
             self.assertTrue(sys.stderr.write.call_count > 1)
             self.assertEquals(mock.call("Authentication tokens not present, please verify that you have os.environ['user'] and os.environ['key']"), sys.stderr.write.call_args_list[0])
+
+    def test_rule_validation(self):
+        """
+        Devemos mostrar a mensagem de "help" caso falte alguma informação
+        para o rgc poder rodar
+        """
+        with mock.patch('sys.stderr'),\
+             mock.patch('rgc.main.collect'),\
+             mock.patch('sys.exit'),\
+             mock.patch('rgc.main._impossible_to_authenticate', return_value=False):
+
+            sys.argv = ['rgc']
+            main()
+            self.assertTrue(sys.stderr.write.call_count > 1)
+            self.assertEquals(mock.call("No rule selected."), sys.stderr.write.call_args_list[0])
+
+    def test_params_collect(self):
+        with mock.patch('rgc.main.collect') as mockcollect,\
+            mock.patch('sys.stderr'),\
+            mock.patch('rgc.main._impossible_to_authenticate', return_value=False),\
+            mock.patch('sys.exit'):
+
+            sys.argv = ['rgc', '--rule', 'isold', '--container', 'trash', '--dryrun']
+            main()
+
+            self.assertEquals([mock.call(rule='isold', container='trash', dryrun=True)], mockcollect.call_args_list)
+
+    def test_rule_validation(self):
+        """
+        Devemos mostrar a mensagem de "help" caso falte alguma informação
+        para o rgc poder rodar
+        """
+        with mock.patch('sys.stderr'),\
+             mock.patch('rgc.main.collect'),\
+             mock.patch('sys.exit'),\
+             mock.patch('rgc.main._impossible_to_authenticate', return_value=False):
+
+            sys.argv = ['rgc', '--rule', 'isold', '--container', 'trash', '--dryrun']
+            main()
+            self.assertTrue(sys.stderr.write.call_count > 1)
+            self.assertEquals(mock.call("Invalid rule: isold"), sys.stderr.write.call_args_list[0])
