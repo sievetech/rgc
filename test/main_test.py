@@ -17,8 +17,12 @@ class MainTest(unittest.TestCase):
             os.environ['user'] = 'sieve'
             os.environ['key'] = 'sieve-key'
             sys.argv = ['rgc', '--help']
+
             main()
             self.assertTrue(sys.stderr.write.call_count > 1)
+
+            del os.environ['user']
+            del os.environ['key']
 
     def test_impossible_to_authenticate(self):
         os.environ['user'] = 'sieve'
