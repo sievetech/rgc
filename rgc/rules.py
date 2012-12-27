@@ -64,4 +64,10 @@ def namehasprefix(obj, prefix):
     """
     return obj.name.startswith(prefix)
 
+@rule
+def namehassuffix(obj, suffix):
+    """
+    Returns whether obj's name ends with suffix.
+    """
+    return obj.name.endswith(suffix)
 
