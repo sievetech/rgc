@@ -3,6 +3,7 @@
 
 from datetime import datetime
 
+AVAILABLE_RULES = {}
 
 class Rule(object):
     """
@@ -59,6 +60,7 @@ def rule(func):
         def __call__(self, obj, *args, **kwargs):
             return func(obj, *args, **kwargs)
 
+    AVAILABLE_RULES[func.__name__] = newr
     return newr
 
 
