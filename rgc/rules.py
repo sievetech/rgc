@@ -51,9 +51,17 @@ def rule(func):
 
 @rule
 def olderthan(obj, ndays):
-        """
-        retval: True if obj's is older than ndays. False otherwise.
-        """
-        objdate = datetime.strptime(obj.last_modified, '%Y-%m-%dT%H:%M:%S.%f')
-        return (datetime.now() - objdate).days > ndays
+    """
+    Returns True if obj's is older than ndays. False otherwise.
+    """
+    objdate = datetime.strptime(obj.last_modified, '%Y-%m-%dT%H:%M:%S.%f')
+    return (datetime.now() - objdate).days > ndays
+
+@rule
+def namehasprefix(obj, prefix):
+    """
+    Returns whether obj's name starts with prefix.
+    """
+    return obj.name.startswith(prefix)
+
 

@@ -5,7 +5,7 @@ import unittest
 import datetime
 
 from rgc.rules import rule, Rule
-from rgc.rules import olderthan
+from rgc.rules import olderthan, namehasprefix
 
 class TestRule(unittest.TestCase):
 
@@ -67,6 +67,18 @@ class TestBaseRules(unittest.TestCase):
         self.assertFalse(olderthan(ndays=dt.days+1).apply(obj))
         #returns False when obj has the same age
         self.assertFalse(olderthan(ndays=dt.days).apply(obj))
+
+    def test_namehasprefix(self):
+        export = mock.MagicMock()
+        export.name = 'export_frete'
+
+        notexport = mock.MagicMock()
+        notexport.name = 'blargh'
+
+        isexport = namehasprefix('export_')
+
+        self.assertTrue(isexport.apply(export))
+        self.assertFalse(isexport.apply(notexport))
 
 
 if __name__ == '__main__':
