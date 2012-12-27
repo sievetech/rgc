@@ -5,6 +5,7 @@ import unittest
 import datetime
 
 from rgc.rules import rule, Rule
+from rgc.rules import olderthan
 
 class TestRule(unittest.TestCase):
 
@@ -50,6 +51,22 @@ class TestRule(unittest.TestCase):
         self.assertTrue((true ^ false).apply(self.obj))
         self.assertTrue((false ^ true).apply(self.obj))
         self.assertFalse((false ^ false).apply(self.obj))
+
+
+class TestBaseRules(unittest.TestCase):
+
+    def test_olderthan(self):
+        obj = mock.MagicMock()
+        dt = datetime.timedelta(days=31)
+        objdate = (datetime.datetime.now() - dt)
+        obj.last_modified = objdate.strftime('%Y-%m-%dT%H:%M:%S.%f')
+
+        #returns True when obj is old
+        self.assertTrue(olderthan(ndays=dt.days-1).apply(obj))
+        #returns False when obj is new
+        self.assertFalse(olderthan(ndays=dt.days+1).apply(obj))
+        #returns False when obj has the same age
+        self.assertFalse(olderthan(ndays=dt.days).apply(obj))
 
 
 if __name__ == '__main__':

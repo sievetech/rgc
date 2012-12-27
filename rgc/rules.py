@@ -44,8 +44,16 @@ def rule(func):
 
     class newr(Rule):
 
-        def __call__(self, obj):
-            return func(obj)
+        def __call__(self, obj, *args, **kwargs):
+            return func(obj, *args, **kwargs)
 
     return newr
+
+@rule
+def olderthan(obj, ndays):
+        """
+        retval: True if obj's is older than ndays. False otherwise.
+        """
+        objdate = datetime.strptime(obj.last_modified, '%Y-%m-%dT%H:%M:%S.%f')
+        return (datetime.now() - objdate).days > ndays
 
