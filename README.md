@@ -40,9 +40,9 @@ def public(obj, ispublic):
 rgc.collect('john', '12345abcd', public(True))
 ```
 
-Rules can be combined using & (and), | (or) and ~ (not).
+Rules can be combined using & (and), | (or), ^ (xor) and ~ (not).
 
-```
+```python
 import rgc.collect
 from rgc.rules import olderthan, namehassuffix, namehasprefix
 
