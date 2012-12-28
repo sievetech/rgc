@@ -5,6 +5,19 @@ import cloudfiles
 
 
 def collect(user, key, rule, container='', dryrun=False):
+    """
+    Connects to rackspace with the user and the key and crawls every container
+    applying the rule to each cloudfile object. If the rule applies, i.e.
+    returns True, the object is deleted.
+
+    If a container name is passed to the parameter 'container', only that
+    container will be crawled.
+
+    If dryrun is True, the objects will not be deleted.
+
+    The function returns a list with the names of the objects to which the
+    rule was successfully applied.
+    """
     conn = cloudfiles.get_connection(user, key)
     if container:
         containers = [conn.get_container(container)]
