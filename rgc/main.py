@@ -36,7 +36,9 @@ def main():
     except NoSuchContainer as nocontainer:
         print "No such container: ", nocontainer.message
     except Exception as e:
-        print "Ops, an error ocorred : ", e.message
+        print "Ops, an error ocurred : ", e.message
+        import traceback
+        traceback.print_exc()
     sys.exit(0)
 
 
