@@ -2,6 +2,7 @@
 import os
 
 import cloudfiles
+from clint.textui import progress
 
 
 def collect(user, key, rule, container='', dryrun=False):
@@ -26,7 +27,7 @@ def collect(user, key, rule, container='', dryrun=False):
 
     deleted = []
     for cont in containers:
-        for obj in cont.get_objects():
+        for obj in progress.bar(cont.get_objects(), label="Removing Objects"):
             if rule.apply(obj):
                 if not dryrun:
                     cont.delete_object(obj.name)

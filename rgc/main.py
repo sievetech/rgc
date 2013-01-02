@@ -28,8 +28,9 @@ def main():
     rule_instance = AVAILABLE_RULES[rule](rule_param)
 
     try:
-        print collect(container=container, dryrun=dryrun, rule=rule_instance, user=user, key=key)
-
+        deleted = collect(container=container, dryrun=dryrun, rule=rule_instance, user=user, key=key)
+        print deleted
+        print "Removing {0} objects from container {1}".format(len(deleted), container)
     except AuthenticationFailed as auth:
         print "User or API KEY wrong ", auth.message
     except NoSuchContainer as nocontainer:
@@ -69,7 +70,7 @@ def _show_help():
 
     How to use:
 
-    $ rgc --rule <rulename> --container <containername>
+    $ rgc --rule <rulename> --container <containername> --dryrun
 
     Details:
 
