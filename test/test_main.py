@@ -87,7 +87,7 @@ class MainTest(unittest.TestCase):
             sys.argv = ['rgc', '--rule', 'isold', '--container', 'trash', '--dryrun']
             main()
 
-            self.assertEquals([mock.call(rule=rule_instance_mock, container='trash', dryrun=True,user=mock.ANY, key=mock.ANY)], mockcollect.call_args_list)
+            self.assertEquals([mock.call(rule=rule_instance_mock, container='trash', dryrun=True, user=mock.ANY, key=mock.ANY)], mockcollect.call_args_list)
 
             del os.environ['user']
             del os.environ['key']
@@ -105,3 +105,7 @@ class MainTest(unittest.TestCase):
             _validate_params({'rule': 'isold', 'container': 'trash', 'dryrun': True})
             self.assertTrue(sys.stderr.write.call_count > 1)
             self.assertEquals(mock.call("Invalid rule: isold"), sys.stderr.write.call_args_list[0])
+
+
+if __name__ == "__main__":
+    unittest.main()
