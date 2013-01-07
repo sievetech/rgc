@@ -80,8 +80,6 @@ class TestRule(unittest.TestCase):
         self.assertFalse(rule_2.apply(8))
 
 
-
-
 class TestBaseRules(unittest.TestCase):
 
     def test_olderthan(self):
@@ -182,6 +180,6 @@ class RuleDecoratorTest(unittest.TestCase):
 
         self.assertTrue('myrule' in AVAILABLE_RULES)
 
+
 if __name__ == '__main__':
     unittest.main()
-
