@@ -94,6 +94,23 @@ class TestCollect(unittest.TestCase):
         self.assertNotIn(mock.call.delete_object(mock_obj2.name), mock_cont2.method_calls)
         self.assertItemsEqual([mock_obj1.name], deleted)
 
+    def test_progress_bar_kwarg(self):
+        mock_conn = mock.MagicMock()
+        mock_conn.get_all_containers.return_value = [mock.MagicMock()]
+
+        with mock.patch('cloudfiles.get_connection', return_value=mock_conn):
+             with mock.patch('clint.textui.progress.bar') as progressbar:
+                 collect(rule=Rule(), user=mock.ANY, key=mock.ANY)
+                 self.assertEqual(
+                     [mock.call(mock.ANY, label=mock.ANY, hide=True)],
+                     progressbar.call_args_list)
+
+             with mock.patch('clint.textui.progress.bar') as progressbar:
+                 collect(rule=Rule(), user=mock.ANY, key=mock.ANY, showprogress=True)
+                 self.assertEqual(
+                    [mock.call(mock.ANY, label=mock.ANY, hide=False)],
+                    progressbar.call_args_list)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -24,11 +24,14 @@ def main():
     dryrun = params.get('dryrun', False)
     rule = params.get('rule', None)
     rule_param = params.get('ruleparam', None)
+    showprogress = params.get('progress', True)
 
     rule_instance = AVAILABLE_RULES[rule](rule_param)
 
     try:
-        deleted = collect(container=container, dryrun=dryrun, rule=rule_instance, user=user, key=key)
+        deleted = collect(container=container, dryrun=dryrun,
+                          rule=rule_instance, user=user, key=key,
+                          showprogress=showprogress)
         print deleted
         print "Removing {0} objects from container {1}".format(len(deleted), container)
     except AuthenticationFailed as auth:

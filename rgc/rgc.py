@@ -5,7 +5,7 @@ import cloudfiles
 from clint.textui import progress
 
 
-def collect(user, key, rule, container='', dryrun=False):
+def collect(user, key, rule, container='', dryrun=False, showprogress=False):
     """
     Connects to rackspace with the user and the key and crawls every container
     applying the rule to each cloudfile object. If the rule applies, i.e.
@@ -27,7 +27,9 @@ def collect(user, key, rule, container='', dryrun=False):
 
     deleted = []
     for cont in containers:
-        for obj in progress.bar(cont.get_objects(), label="Removing Objects"):
+        objs = progress.bar(cont.get_objects(),label="Collecting Objects",
+                            hide=not showprogress)
+        for obj in objs:
             if rule.apply(obj):
                 if not dryrun:
                     cont.delete_object(obj.name)
