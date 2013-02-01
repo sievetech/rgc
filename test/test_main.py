@@ -26,11 +26,13 @@ class MainTest(unittest.TestCase):
 
     def test_impossible_to_authenticate(self):
         os.environ['user'] = 'sieve'
-        self.assertTrue(_impossible_to_authenticate(), 'Nao deveria ser possivel autenticar apenas com user')
+        self.assertTrue(_impossible_to_authenticate(),
+                        'Nao deveria ser possivel autenticar apenas com user')
 
         os.environ['key'] = 'sieve'
         del os.environ['user']
-        self.assertTrue(_impossible_to_authenticate(), 'Nao deveria ser possivel autenticar apenas com key')
+        self.assertTrue(_impossible_to_authenticate(),
+                        'Nao deveria ser possivel autenticar apenas com key')
 
         os.environ['key'] = 'sieve'
         os.environ['user'] = 'sieve'
@@ -42,7 +44,7 @@ class MainTest(unittest.TestCase):
 
     def test_no_environ_vars(self):
         """
-        Deveos mostrar a mensagem de "help" caso falte alguma informação
+        Devemos mostrar a mensagem de "help" caso falte alguma informação
         para o rgc poder rodar
         """
         with mock.patch('sys.stderr'),\
@@ -56,7 +58,9 @@ class MainTest(unittest.TestCase):
             sys.argv = ['rgc']
             _validate_params({})
             self.assertTrue(sys.stderr.write.call_count > 1)
-            self.assertEquals(mock.call("Authentication tokens not present, please verify that you have os.environ['user'] and os.environ['key']"), sys.stderr.write.call_args_list[0])
+            self.assertEquals(
+               mock.call("Authentication tokens not present, please verify that you have os.environ['user'] and os.environ['key']"),
+               sys.stderr.write.call_args_list[0])
 
     def test_rule_validation(self):
         """
@@ -87,7 +91,11 @@ class MainTest(unittest.TestCase):
             sys.argv = ['rgc', '--rule', 'isold', '--container', 'trash', '--dryrun']
             main()
 
-            self.assertEquals([mock.call(rule=rule_instance_mock, container='trash', dryrun=True, user=mock.ANY, key=mock.ANY, showprogress=True)], mockcollect.call_args_list)
+            self.assertEquals(
+                [mock.call(rule=rule_instance_mock, container='trash',
+                           dryrun=True, user=mock.ANY, key=mock.ANY,
+                           showprogress=True)],
+                mockcollect.call_args_list)
 
             del os.environ['user']
             del os.environ['key']
