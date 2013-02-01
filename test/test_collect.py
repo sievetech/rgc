@@ -111,6 +111,37 @@ class TestCollect(unittest.TestCase):
                     [mock.call(mock.ANY, label=mock.ANY, hide=False)],
                     progressbar.call_args_list)
 
+    def test_delete_is_caled_when_no_cb_is_passed(self):
+        mock_obj = mock.MagicMock()
+        mock_obj.name = 'mock'
+
+        mock_cont = mock.MagicMock()
+        mock_cont.name = 'container'
+        mock_cont.get_objects.return_value = [mock_obj]
+
+        mock_conn = mock.MagicMock()
+        mock_conn.get_all_containers.return_value = [mock_cont]
+        mock_conn.get_container.return_value = mock_cont
+        with mock.patch('cloudfiles.get_connection', return_value=mock_conn):
+            collect(rule=Rule(), container='container', user=mock.ANY, key=mock.ANY)
+            self.assertIn(mock.call.delete_object(mock_obj.name), mock_cont.method_calls)
+
+    def test_cb_is_called(self):
+        mock_obj = mock.MagicMock()
+        mock_obj.name = 'mock'
+
+        mock_cont = mock.MagicMock()
+        mock_cont.name = 'container'
+        mock_cont.get_objects.return_value = [mock_obj]
+
+        mock_conn = mock.MagicMock()
+        mock_conn.get_all_containers.return_value = [mock_cont]
+        mock_conn.get_container.return_value = mock_cont
+        with mock.patch('cloudfiles.get_connection', return_value=mock_conn):
+            cb = mock.MagicMock()
+            collect(rule=Rule(), container='container', user=mock.ANY, key=mock.ANY, cb=cb)
+            self.assertEqual(1, cb.call_count)
+
 
 if __name__ == '__main__':
     unittest.main()

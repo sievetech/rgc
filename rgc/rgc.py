@@ -5,11 +5,19 @@ import cloudfiles
 from clint.textui import progress
 
 
-def collect(user, key, rule, container='', dryrun=False, showprogress=False):
+def delete(cont, obj):
+    """
+    Deletes the object.
+    """
+    cont.delete_object(obj.name)
+
+
+def collect(user, key, rule, container='', dryrun=False, showprogress=False, cb=delete):
     """
     Connects to rackspace with the user and the key and crawls every container
     applying the rule to each cloudfile object. If the rule applies, i.e.
-    returns True, the object is deleted.
+    returns True, the callback ('cb') is called with the container as first
+    argument and the object as second argument. The default callback is delete.
 
     If a container name is passed to the parameter 'container', only that
     container will be crawled.
@@ -25,15 +33,15 @@ def collect(user, key, rule, container='', dryrun=False, showprogress=False):
     else:
         containers = conn.get_all_containers()
 
-    deleted = []
+    collected = []
     for cont in containers:
-        objs = progress.bar(cont.get_objects(),label="Collecting Objects",
+        objs = progress.bar(cont.get_objects(), label="Collecting Objects",
                             hide=not showprogress)
         for obj in objs:
             if rule.apply(obj):
                 if not dryrun:
-                    cont.delete_object(obj.name)
-                deleted.append(obj.name)
+                    cb(cont, obj)
+                collected.append(obj.name)
 
-    return deleted
+    return collected
 
