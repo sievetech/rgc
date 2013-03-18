@@ -70,7 +70,17 @@ def olderthan(obj, ndays):
     Returns True if obj's is older than ndays. False otherwise.
     """
     objdate = datetime.strptime(obj.last_modified, '%Y-%m-%dT%H:%M:%S.%f')
-    return (datetime.now() - objdate).days > ndays
+    delta = (datetime.now() - objdate)
+    return delta.days > ndays
+
+@rule
+def olderthanhours(obj, nhours):
+    """
+    Returns True if obj's is older than nhours. False otherwise.
+    """
+    objdate = datetime.strptime(obj.last_modified, '%Y-%m-%dT%H:%M:%S.%f')
+    delta = (datetime.now() - objdate)
+    return (delta.seconds / 3600) + (delta.days * 24) > nhours
 
 
 @rule
