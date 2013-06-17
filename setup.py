@@ -2,7 +2,6 @@
 # encoding: utf-8
 from setuptools import setup
 import os
-import sys
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
@@ -19,10 +18,10 @@ setup(
     entry_points={
         'console_scripts': [
             'rgc = rgc.main:main',
-            ]
+        ]
     },
-    install_requires = ['python-modargs', 'python-cloudfiles'],
-    classifiers = [
+    install_requires=['python-modargs', 'python-cloudfiles', "clint"],
+    classifiers=[
         "License :: OSI Approved :: BSD License",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
