@@ -1,7 +1,6 @@
 #coding: utf-8
-import os
+import pyrax
 
-import cloudfiles
 from clint.textui import progress
 
 
@@ -16,7 +15,7 @@ def _process(cont, deleted, dryrun, objects, rule):
             deleted.append(obj.name)
 
 
-def collect(user, key, rule, container='', dryrun=False):
+def collect(user, key, rule, container='', dryrun=False, region=None):
     """
     Connects to rackspace with the user and the key and crawls every container
     applying the rule to each cloudfile object. If the rule applies, i.e.
@@ -30,19 +29,23 @@ def collect(user, key, rule, container='', dryrun=False):
     The function returns a list with the names of the objects to which the
     rule was successfully applied.
     """
-    conn = cloudfiles.get_connection(user, key)
+    pyrax.set_setting("identity_type", "rackspace")
+    pyrax.set_credentials(user, key)
+    deleted = []
+    cloudfiles = pyrax.connect_to_cloudfiles(region=region)
+
     if container:
-        containers = [conn.get_container(container)]
+        containers = [cloudfiles.get_container(container)]
     else:
-        containers = conn.get_all_containers()
+        containers = cloudfiles.get_all_containers()
 
     for cont in containers:
         objects = cont.get_objects(marker="")
         while objects:
-            deleted = []
             _process(cont, deleted, dryrun, objects, rule)
-            objects = cont.get_objects(marker=objects[-1])
+            objects = cont.get_objects(marker=objects[-1].name)
             print "Removed {0} objects".format(len(deleted))
+            deleted = []
 
     return deleted
 

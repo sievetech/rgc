@@ -3,7 +3,7 @@
 import sys
 import os
 
-from cloudfiles.errors import AuthenticationFailed, NoSuchContainer
+from pyrax.exceptions import AuthenticationFailed, NoSuchContainer
 from modargs import args
 from rgc import collect
 from rules import AVAILABLE_RULES
@@ -19,16 +19,17 @@ def main():
     _validate_params(params)
 
     user = os.environ['user']
-    key =  os.environ['key']
+    key = os.environ['key']
     container = params.get('container', None)
     dryrun = params.get('dryrun', False)
     rule = params.get('rule', None)
     rule_param = params.get('ruleparam', None)
+    region = params.get("region", None)
 
     rule_instance = AVAILABLE_RULES[rule](rule_param)
 
     try:
-        deleted = collect(container=container, dryrun=dryrun, rule=rule_instance, user=user, key=key)
+        deleted = collect(container=container, dryrun=dryrun, rule=rule_instance, user=user, key=key, region=region)
         print deleted
         print "Removing {0} objects from container {1}".format(len(deleted), container)
     except AuthenticationFailed as auth:
