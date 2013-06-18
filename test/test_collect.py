@@ -98,6 +98,22 @@ class TestCollect(unittest.TestCase):
         self.assertNotIn(mock.call.delete_object(mock_obj2.name), mock_cont2.method_calls)
         self.assertItemsEqual([mock_obj1.name], deleted)
 
+    def test_specific_region(self):
+        mock_obj = mock.MagicMock()
+        mock_obj.name = 'object_1'
+        mock_cont = mock.MagicMock()
+        mock_cont.get_objects.side_effect = [[mock_obj], []]
+
+        mock_conn = mock.MagicMock()
+        mock_conn.get_all_containers.return_value = [mock_cont]
+        mock_conn.get_container.return_value = mock_cont
+
+        with mock.patch('pyrax.connect_to_cloudfiles', return_value=mock_conn) as mock_cloud,\
+             mock.patch.object(pyrax, "set_credentials"):
+            collect(rule=Rule(), user=mock.ANY, key=mock.ANY, region="REGION_1")
+
+        self.assertEqual([mock.call(region="REGION_1")], mock_cloud.call_args_list)
+
 
 if __name__ == '__main__':
     unittest.main()
