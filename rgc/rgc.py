@@ -42,10 +42,10 @@ def collect(user, key, rule, container='', dryrun=False, region=None):
     for cont in containers:
         objects = cont.get_objects(marker="")
         while objects:
+            deleted = []
             _process(cont, deleted, dryrun, objects, rule)
             objects = cont.get_objects(marker=objects[-1].name)
             print "Removed {0} objects".format(len(deleted))
-            deleted = []
 
     return deleted
 
