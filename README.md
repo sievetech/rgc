@@ -56,11 +56,12 @@ rgc.collect('john', '12345abcd', is_useless_xls)
 
 2) Authors, Copyright and License
 ---
-rgc is Copyright 2012 [Sieve Tecnologia](http://sieve.com.br/).
+rgc is Copyright 2013 [Sieve Tecnologia](http://sieve.com.br/).
 rgc was written by:
  * [Dalton Matos](https://github.com/daltonmatos)
  * [Elias Tandel Barrionovo](https://github.com/etandel)
  * [Jesué Junior](https://github.com/jesuejunior)
+ * [Thúlio Costa](https://github.com/thulio)
 
 rgc is licensed under 3-BSD. See LICENSE.txt for more details.
 

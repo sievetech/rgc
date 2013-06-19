@@ -20,7 +20,7 @@ setup(
             'rgc = rgc.main:main',
         ]
     },
-    install_requires=['python-modargs', 'python-cloudfiles', "clint"],
+    install_requires=['python-modargs', 'pyrax', "clint"],
     classifiers=[
         "License :: OSI Approved :: BSD License",
         "Operating System :: OS Independent",

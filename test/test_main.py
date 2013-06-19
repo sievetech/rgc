@@ -87,7 +87,7 @@ class MainTest(unittest.TestCase):
             sys.argv = ['rgc', '--rule', 'isold', '--container', 'trash', '--dryrun']
             main()
 
-            self.assertEquals([mock.call(rule=rule_instance_mock, container='trash', dryrun=True, user=mock.ANY, key=mock.ANY)], mockcollect.call_args_list)
+            self.assertEquals([mock.call(rule=rule_instance_mock, container='trash', dryrun=True, user=mock.ANY, key=mock.ANY, region=mock.ANY)], mockcollect.call_args_list)
 
             del os.environ['user']
             del os.environ['key']
